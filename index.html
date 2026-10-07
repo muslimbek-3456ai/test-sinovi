@@ -219,6 +219,7 @@
             top: 0;
             background-color: #0f172a;
             padding: 5px 0;
+            z-index: 10;
         }
 
         .leaderboard-item {
@@ -364,7 +365,7 @@
         
         let leaderboard = [];
 
-        const BIN_ID = "6ac5c89bac6210605a1b228a";
+        const BIN_ID = "6ac5d449ac6210605a1b39c0";
         const API_KEY = "$2a$10$Qe2dt9/y/m3p6H6GMzedq.UOtz1Y3f7SHDyEAZFzogXMo6odlbsEe";
 
         document.addEventListener("visibilitychange", function() {
@@ -385,15 +386,19 @@
 
         async function loadLeaderboard() {
             try {
-                let response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-                    headers: { 'X-Master-Key': API_KEY }
+                let response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest?_t=` + Date.now(), {
+                    method: 'GET',
+                    headers: {
+                        'X-Master-Key': API_KEY,
+                        'Cache-Control': 'no-cache'
+                    }
                 });
                 let data = await response.json();
                 leaderboard = data.record.leaderboard || [];
                 updateLeaderboardUI();
             } catch (error) {
                 console.log("Reytingni yuklashda xatolik:", error);
-                document.getElementById("home-leaderboard-list").innerHTML = `<div style="text-align: center; color: #94a3b8; font-size: 13px;">Reyting vaqtincha ishlamayapti</div>`;
+                document.getElementById("home-leaderboard-list").innerHTML = `<div style="text-align: center; color: #94a3b8; font-size: 13px;">Reyting yuklandi, natijalar kutilmoqda</div>`;
             }
         }
 
@@ -473,6 +478,8 @@
         window.onload = async function() {
             await loadLeaderboard();
             selectTerm(1, document.querySelector('.class-btn.active'));
+            // Har 5 sekundda avtomatik ravishda boshqa o'quvchilarning natijalarini yangilab turish
+            setInterval(loadLeaderboard, 5000);
         };
 
         function selectTerm(term, btnElement) {
@@ -484,7 +491,7 @@
             prepareTerm(term);
         }
 
-        function prepareTerm(term) {
+        async function prepareTerm(term) {
             if (timerInterval) clearInterval(timerInterval);
             isAnswerProcessing = false;
 
@@ -518,7 +525,8 @@
             document.getElementById("start-screen").style.display = "block";
             document.getElementById("quiz-screen").style.display = "none";
             document.getElementById("result-screen").style.display = "none";
-            loadLeaderboard();
+            
+            await loadLeaderboard();
         }
 
         function startQuiz() {
@@ -662,7 +670,6 @@
             }
 
             leaderboard.sort((a, b) => b.score - a.score);
-            // Barcha natijalarni saqlash uchun slice olib tashlandi
             
             await saveLeaderboard();
 
