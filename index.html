@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10-sinf Informatika | Choraklik Monitoring Testi</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --border-color: #334155;
+            --correct-color: #22c55e;
+            --incorrect-color: #ef4444;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: filter 0.3s ease;
+        }
+
+        body.blurred {
+            filter: blur(20px);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-25deg);
+            font-size: 28px;
+            font-weight: bold;
+            color: rgba(239, 68, 68, 0.12);
+            pointer-events: none;
+            z-index: 1000;
+            white-space: nowrap;
+            display: none;
+            text-align: center;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--accent-color);
+            margin-bottom: 5px;
+            font-size: 26px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .class-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .class-btn {
+            background-color: #0f172a;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .class-btn:hover {
+            border-color: var(--accent-color);
+            background-color: #1e293b;
+        }
+
+        .class-btn.active {
+            background-color: var(--accent-color);
+            color: #0f172a;
+            border-color: var(--accent-color);
+        }
+
+        .wide-btn {
+            grid-column: span 2;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 15px;
+            box-sizing: border-box;
+            outline: none;
+            user-select: text;
+            -webkit-user-select: text;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent-color);
+        }
+
+        .primary-btn {
+            width: 100%;
+            background-color: var(--accent-color);
+            color: #0f172a;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .primary-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #94a3b8;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background-color: #0f172a;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 14px 16px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            background-color: #334155;
+            border-color: var(--accent-color);
+        }
+
+        .leaderboard-box {
+            margin-top: 25px;
+            background-color: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .leaderboard-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            background-color: #0f172a;
+            padding: 5px 0;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 6px 0;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-container {
+            max-height: 250px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            background-color: #0f172a;
+        }
+
+        .review-item {
+            font-size: 13px;
+            padding: 8px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+
+        .review-correct {
+            background-color: rgba(34, 197, 94, 0.15);
+            border-left: 4px solid var(--correct-color);
+        }
+
+        .review-incorrect {
+            background-color: rgba(239, 68, 68, 0.15);
+            border-left: 4px solid var(--incorrect-color);
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 20px;
+            margin: 10px 0;
+        }
+
+        .error-msg {
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 8px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="watermark">Bek Olimpiads</div>
+
+        <!-- BOSHLANG'ICH OYNA -->
+        <div id="start-screen">
+            <h1>10-Sinf Monitoring</h1>
+            <div class="subtitle">Informatika va Axborot Texnologiyalari (1-4 Chorak)</div>
+
+            <div class="input-group">
+                <label for="username-input">Ism va familiyangizni kiriting:</label>
+                <input type="text" id="username-input" placeholder="Masalan: Azizbek Olimov">
+                <div id="error-msg" class="error-msg">Siz bu testni allaqachon topshirgansiz!</div>
+            </div>
+
+            <label>Chorakni tanlang:</label>
+            <div class="class-selector">
+                <button class="class-btn active" onclick="selectTerm(1, this)">1-Chorak</button>
+                <button class="class-btn" onclick="selectTerm(2, this)">2-Chorak</button>
+                <button class="class-btn" onclick="selectTerm(3, this)">3-Chorak</button>
+                <button class="class-btn" onclick="selectTerm(4, this)">4-Chorak</button>
+                <button class="class-btn wide-btn" onclick="selectTerm('annual', this)">Yillik Monitoring (Barchasi)</button>
+            </div>
+
+            <button class="primary-btn" onclick="startQuiz()">Testni Boshlash</button>
+
+            <div class="leaderboard-box">
+                <div class="leaderboard-title">🌐 Barcha O'quvchilar Reytingi</div>
+                <div id="home-leaderboard-list">Yuklanmoqda...</div>
+            </div>
+        </div>
+
+        <!-- TEST JARAYONI OYnasi -->
+        <div id="quiz-screen" style="display: none;">
+            <div class="quiz-header">
+                <span id="progress-indicator">Chorak | Savol: 1 / 10</span>
+                <span id="score">🏆 Ball: 0</span>
+                <span id="timer">⏳ 30</span>
+            </div>
+
+            <div class="question-text" id="question-text">Savol yuklanmoqda...</div>
+
+            <div class="options-list" id="options-list">
+                <button class="option-btn" onclick="checkAnswer(0)">Variant A</button>
+                <button class="option-btn" onclick="checkAnswer(1)">Variant B</button>
+                <button class="option-btn" onclick="checkAnswer(2)">Variant C</button>
+                <button class="option-btn" onclick="checkAnswer(3)">Variant D</button>
+            </div>
+        </div>
+
+        <!-- NATIJA OYnasi -->
+        <div id="result-screen" style="display: none;">
+            <h1>Test Yakunlandi!</h1>
+            <div class="subtitle" id="result-user-name">Ishtirokchi: Noma'lum</div>
+
+            <div style="text-align: center; margin-bottom: 15px;">
+                <h2 id="final-score-text" style="color: var(--accent-color); margin: 5px 0;">Umumiy ball: 0</h2>
+                <div id="grade-display"></div>
+                <p id="readiness-text" style="font-size: 14px; color: #cbd5e1;"></p>
+            </div>
+
+            <label>Savollar va javoblar tahlili:</label>
+            <div class="review-container" id="review-list"></div>
+
+            <div class="leaderboard-box" style="margin-bottom: 20px;">
+                <div class="leaderboard-title">🌐 Barcha O'quvchilar Reytingi</div>
+                <div id="result-leaderboard-list">Yuklanmoqda...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let userName = "O'quvchi";
+        let currentTerm = 1;
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswersCount = 0;
+        let timeLeft = 30;
+        let timerInterval = null;
+        let userAnswers = [];
+        let isAnswerProcessing = false;
+        
+        let leaderboard = [];
+
+        const BIN_ID = "6ac5c89bac6210605a1b228a";
+        const API_KEY = "$2a$10$Qe2dt9/y/m3p6H6GMzedq.UOtz1Y3f7SHDyEAZFzogXMo6odlbsEe";
+
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.body.classList.add("blurred");
+            } else {
+                document.body.classList.remove("blurred");
+            }
+        });
+
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'p' || e.key === 'c'))) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        async function loadLeaderboard() {
+            try {
+                let response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': API_KEY }
+                });
+                let data = await response.json();
+                leaderboard = data.record.leaderboard || [];
+                updateLeaderboardUI();
+            } catch (error) {
+                console.log("Reytingni yuklashda xatolik:", error);
+                document.getElementById("home-leaderboard-list").innerHTML = `<div style="text-align: center; color: #94a3b8; font-size: 13px;">Reyting vaqtincha ishlamayapti</div>`;
+            }
+        }
+
+        async function saveLeaderboard() {
+            try {
+                await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': API_KEY
+                    },
+                    body: JSON.stringify({ leaderboard: leaderboard })
+                });
+            } catch (error) {
+                console.log("Reytingni saqlashda xatolik:", error);
+            }
+        }
+
+        const termQuestions = {
+            1: [
+                { q: "Axborot xavfsizligining uchta asosiy tamoyili (CIA triadasi) qaysilar?", options: ["Maxfiylik, yaxlitlik va foydalanish imkoniyati", "Tezlik, hajm va narx", "Dastur, apparat va tarmoq", "Loyiha, reja va hisobot"], correct: 0 },
+                { q: "Ma'lumotlar bazasi (MB) nima?", options: ["O'zaro bog'langan ma'lumotlarning tartiblangan to'plami", "Faqat matnli hujjatlar to'plami", "Kompyuter o'yinlari papkasi", "Internet brauzer tarixi"], correct: 0 },
+                { q: "Relatsion ma'lumotlar bazasida jadvallarning ustunlari qanday nomlanadi?", options: ["Maydon (Field / Atribut)", "Yozuv (Record)", "Fayl", "Kortej"], correct: 0 },
+                { q: "Relatsion ma'lumotlar bazasida jadvallarning qatorlari nima deb ataladi?", options: ["Yozuv (Record)", "Maydon (Field)", "Ustun", "Domen"], correct: 0 },
+                { q: "Asosiy kalit (Primary Key) vazifasi nima?", options: ["Jadvaldagi har bir yozuvni unikal (takrorlanmas) aniqlash", "Faqat rang berish", "Ma'lumotni o'chirish", "Parolni yashirish"], correct: 0 },
+                { q: "Microsoft Access dasturida ma'lumotlar bazasi faylining kengaytmasi qanday?", options: [".accdb", ".docx", ".xlsx", ".pptx"], correct: 0 },
+                { q: "Fidbek (Teskari aloqa) tushunchasi axborot jarayonlarining qaysi bosqichiga tegishli?", options: ["Axborotni uzatish va qabul qilish", "Faqat saqlash", "Faqat o'chirish", "Faqat shifrlash"], correct: 0 },
+                { q: "Kiberxavfsizlikda 'Phishing' (Fishing) hujumi nima?", options: ["Soxta sahifalar orqali shaxsiy ma'lumotlarni o'g'irlash", "Kabelni uzish", "Tezlikni oshirish", "Antivirusni yangilash"], correct: 0 },
+                { q: "Tarmoq xavfsizligini ta'minlash uchun qaysi qurilma yoki dastur ishlatiladi?", options: ["Firewall (Brandmauer)", "Switch", "Hub", "Karnay"], correct: 0 },
+                { q: "Axborotni shifrlash nima uchun qo'llaniladi?", options: ["Ruxsatsiz o'qishdan himoya qilish uchun", "Hajmini kattalashtirish uchun", "Internetni tezlashtirish uchun", "Monitor rangini o'zgartirish uchun"], correct: 0 }
+            ],
+            2: [
+                { q: "Python dasturlash tilida funksiya yaratish uchun qaysi kalit so'z ishlatiladi?", options: ["def", "function", "fun", "lambda"], correct: 0 },
+                { q: "Obyektga yo'naltirilgan dasturlashning asosiy tamoyillariga nima kirmaydi?", options: ["Kommutatsiya", "Inkapsulyatsiya", "Polimorfizm", "Merosxo'rlik"], correct: 0 },
+                { q: "Python'da ro'yxat (list) elementlarini qaysi qavs yordamida ochamiz?", options: ["To'rtburchak qavs [...]", "Mavhum qavs {...}", "Dumaloq qavs (...)", "Burchakli qavs <...>"], correct: 0 },
+                { q: "Python tilida lug'at (dictionary) ma'lumotlar tuzilmasi nimadan iborat?", options: ["Kalit va qiymat (Key-Value) juftligidan", "Faqat tartibli indekslardan", "Faqat manfiy sonlardan", "Fayl yo'lidan"], correct: 0 },
+                { q: "Rekursiya nima?", options: ["Funksiyaning o'zini o'zi chaqirishi", "Sikldan chiqib ketish", "Xatolarni tozalash", "Massivni saralash"], correct: 0 },
+                { q: "Python tilida faylni ochish uchun qaysi funksiya ishlatiladi?", options: ["open()", "read()", "file()", "new()"], correct: 0 },
+                { q: "Ma'lumotlar tuzilmasi bo'lgan Stek (Stack) qanday tamoyil asosida ishlaydi?", options: ["LIFO (Last In, First Out)", "FIFO", "Tasodifiy", "Tartibli"], correct: 0 },
+                { q: "Navbat (Queue) ma'lumotlar tuzilmasi qanday tamoyilga asoslanadi?", options: ["FIFO (First In, First Out)", "LIFO", "LILO", "Random"], correct: 0 },
+                { q: "Python'da set (to'plam) ning asosiy xususiyati:", options: ["Takrorlanuvchi elementlarni saqlamaydi", "Tartiblangan bo'ladi", "Faqat matn oladi", "Indekslash mumkin"], correct: 0 },
+                { q: "Dasturlashda 'Debugging' so'zi nimani anglatadi?", options: ["Xatolarni qidirish va tuzatish", "O'yin o'ynash", "Kod yozishni boshlash", "Faylni saqlash"], correct: 0 }
+            ],
+            3: [
+                { q: "Veb sahifalar tuzilishini yaratish uchun qaysi til ishlatiladi?", options: ["HTML", "Python", "C++", "Java"], correct: 0 },
+                { q: "Veb sahifalarga bezak berish va dizayn qilish uchun qaysi til ishlatiladi?", options: ["CSS", "HTML", "SQL", "PHP"], correct: 0 },
+                { q: "CSS da id selektori qaysi belgi bilan boshlanadi?", options: ["#", ".", "*", "&"], correct: 0 },
+                { q: "CSS da class selektori qaysi belgi bilan boshlanadi?", options: [".", "#", "@", "/"], correct: 0 },
+                { q: "JavaScript tili veb-sahifalarda nima uchun kerak?", options: ["Interaktivlik va dinamik xatti-harakatlar qo'shish uchun", "Faqat matn yozish uchun", "Qattiq diskni formatlash uchun", "Serverni sovutish uchun"], correct: 0 },
+                { q: "HTML da gipermurojaat (havola) yaratish tegi qaysi?", options: ["<a>", "<link>", "<href>", "<p>"], correct: 0 },
+                { q: "HTML da rasm qo'shish uchun qaysi teg ishlatiladi?", options: ["<img>", "<pic>", "<image>", "<src>"], correct: 0 },
+                { q: "CSS Flexbox texnologiyasi asosan nima uchun ishlatiladi?", options: ["Elementlarni bir o'lchamda moslashuvchan joylashtirish uchun", "Faqat rang berish uchun", "Ma'lumotlar bazasini boshqarish uchun", "Matnni tarjima qilish uchun"], correct: 0 },
+                { q: "JavaScript da o'zgaruvchi e'lon qilish uchun qaysi kalit so'zlar ishlatiladi?", options: ["let, const, var", "int, float", "def, function", "string, char"], correct: 0 },
+                { q: "Veb-dizaynda Responsive (moslashuvchan) dizayn nima?", options: ["Saytning barcha qurilmalarda (telefon, planshet, kompyuter) chiroyli ko'rinishi", "Faqat katta monitorlar uchun mo'ljallangan dizayn", "Faqat qora rangdagi sayt", "Sekin ishlaydigan sayt"], correct: 0 }
+            ],
+            4: [
+                { q: "Sun'iy intellekt (Artificial Intelligence) deganda nima tushuniladi?", options: ["Kompyuter tizimlarining inson kabi fikrlashi va qaror qabul qilishi", "Faqat oddiy kalkulyator", "Buzilgan kompyuter", "Printer turi"], correct: 0 },
+                { q: "Mashinali o'qitish (Machine Learning) nima?", options: ["Kompyuterning ma'lumotlar asosida o'z-o'zidan o'rganishi", "O'quvchining dars yodlashi", "Kodni qo'lda yozish", "Internetni o'chirish"], correct: 0 },
+                { q: "Neyron tarmoqlar qaysi tabiat obyektidan ilhomlanib yaratilgan?", options: ["Inson miyasi neyronlari", "O'simlik ildizi", "Quyosh tizimi", "Daryo oqimi"], correct: 0 },
+                { q: "Katta hajmli ma'lumotlarni qayta ishlash sohasi qanday ataladi?", options: ["Big Data", "Small Data", "Micro Code", "Quick SQL"], correct: 0 },
+                { q: "Bulutli texnologiyalar (Cloud Computing) afzalligi nimada?", options: ["Ma'lumotlarni internet orqali istalgan joydan boshqarish va saqlash", "Faqat bitta kompyuterda saqlash", "Internet tezligini pasaytirish", "Tokni tejash"], correct: 0 },
+                { q: "Axborot tizimlarining hayotiy siklida dastlabki bosqich qaysi?", options: ["Talablarni tahlil qilish va rejalashtirish", "Dasturni o'chirish", "Sotish", "Test qilish"], correct: 0 },
+                { q: "Kiberxavfsizlikda ikki bosqichli autentifikatsiya (2FA) nima?", options: ["Kirish uchun parol bilan birga telefon raqamga kelgan kodni ham kiritish", "Faqat bitta parol ishlatish", "Parolni umuman yozmaslik", "Kompyuterni o'chirish"], correct: 0 },
+                { q: "Blokcheyn (Blockchain) texnologiyasining asosiy xususiyati:", options: ["Ma'lumotlar bloklarga bo'linib, ularni o'zgartirib bo'lmasligi", "Tez o'chib ketishi", "Faqat bitta shaxsga tegishli bo'lishi", "Parolsiz ishlashi"], correct: 0 },
+                { q: "Axborot jamiyati nima?", options: ["Jamiyat hayotida axborot va uning texnologiyalari hal qiluvchi o'rin tutishi", "Faqat qog'oz kitoblar o'qiladigan davr", "Internet umuman yo'q zamon", "Faqat o'yin o'ynaladigan muhit"], correct: 0 },
+                { q: "IT sohasidagi kasblarga quyidagilardan qaysi biri kiradi?", options: ["Dasturchi, Ma'lumotlar bazasi administratori, Veb-dizayner", "Faqat sartarosh", "Faqat haydovchi", "Faqat oshpaz"], correct: 0 }
+            ]
+        };
+
+        termQuestions['annual'] = [
+            ...termQuestions[1],
+            ...termQuestions[2],
+            ...termQuestions[3],
+            ...termQuestions[4]
+        ];
+
+        window.onload = async function() {
+            await loadLeaderboard();
+            selectTerm(1, document.querySelector('.class-btn.active'));
+        };
+
+        function selectTerm(term, btnElement) {
+            currentTerm = term;
+            document.querySelectorAll(".class-btn").forEach(btn => btn.classList.remove("active"));
+            if(btnElement) {
+                btnElement.classList.add("active");
+            }
+            prepareTerm(term);
+        }
+
+        function prepareTerm(term) {
+            if (timerInterval) clearInterval(timerInterval);
+            isAnswerProcessing = false;
+
+            let rawQuestions = termQuestions[term] || termQuestions[1];
+            let cloned = JSON.parse(JSON.stringify(rawQuestions));
+            
+            for (let i = cloned.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cloned[i], cloned[j]] = [cloned[j], cloned[i]];
+            }
+
+            questions = cloned.map(item => {
+                let optionsWithIndex = item.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
+                for (let i = optionsWithIndex.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [optionsWithIndex[i], optionsWithIndex[j]] = [optionsWithIndex[j], optionsWithIndex[i]];
+                }
+                let newCorrect = optionsWithIndex.findIndex(o => o.originalIndex === item.correct);
+                return {
+                    q: item.q,
+                    options: optionsWithIndex.map(o => o.text),
+                    correct: newCorrect
+                };
+            });
+
+            currentQuestionIndex = 0;
+            score = 0;
+            correctAnswersCount = 0;
+            userAnswers = [];
+            
+            document.getElementById("start-screen").style.display = "block";
+            document.getElementById("quiz-screen").style.display = "none";
+            document.getElementById("result-screen").style.display = "none";
+            loadLeaderboard();
+        }
+
+        function startQuiz() {
+            let inputVal = document.getElementById("username-input").value.trim();
+            let errorMsg = document.getElementById("error-msg");
+            
+            if (inputVal === "") {
+                errorMsg.innerText = "Iltimos, ism va familiyangizni kiriting!";
+                errorMsg.style.display = "block";
+                return;
+            }
+
+            if (localStorage.getItem("exam_submitted_" + inputVal)) {
+                errorMsg.innerText = "Siz bu testni allaqachon topshirgansiz! Faqat bir marta topshirish mumkin.";
+                errorMsg.style.display = "block";
+                return;
+            }
+
+            errorMsg.style.display = "none";
+            userName = inputVal;
+
+            let wm = document.getElementById("watermark");
+            wm.innerText = userName + " | Bek Olimpiads";
+            wm.style.display = "block";
+
+            if (timerInterval) clearInterval(timerInterval);
+            isAnswerProcessing = false;
+            document.getElementById("start-screen").style.display = "none";
+            document.getElementById("quiz-screen").style.display = "block";
+            document.getElementById("score").innerText = `🏆 Ball: ${score}`;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (timerInterval) clearInterval(timerInterval);
+            isAnswerProcessing = false;
+
+            timeLeft = 30;
+            document.getElementById("timer").innerText = `⏳ ${timeLeft}`;
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById("timer").innerText = `⏳ ${timeLeft}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    if (!isAnswerProcessing) {
+                        checkAnswer(-1);
+                    }
+                }
+            }, 1000);
+
+            let qData = questions[currentQuestionIndex];
+            let labelTitle = currentTerm === 'annual' ? 'Yillik Monitoring' : `${currentTerm}-Chorak`;
+            document.getElementById("progress-indicator").innerText = `${labelTitle} | Savol: ${currentQuestionIndex + 1} / ${questions.length}`;
+            document.getElementById("question-text").innerText = qData.q;
+
+            let buttons = document.querySelectorAll(".options-list .option-btn");
+            qData.options.forEach((optText, idx) => {
+                if(buttons[idx]) {
+                    buttons[idx].innerText = optText;
+                }
+            });
+        }
+
+        function checkAnswer(selectedOption) {
+            if (isAnswerProcessing) return;
+            isAnswerProcessing = true;
+
+            if (timerInterval) clearInterval(timerInterval);
+            let qData = questions[currentQuestionIndex];
+
+            let isCorrect = (selectedOption === qData.correct);
+            if (isCorrect) {
+                score += timeLeft * 10;
+                correctAnswersCount++;
+                document.getElementById("score").innerText = `🏆 Ball: ${score}`;
+            }
+
+            userAnswers.push({
+                question: qData.q,
+                selected: selectedOption !== -1 ? qData.options[selectedOption] : "Vaqt tugadi",
+                correctAnswer: qData.options[qData.correct],
+                isCorrect: isCorrect
+            });
+
+            currentQuestionIndex++;
+            
+            setTimeout(() => {
+                if (currentQuestionIndex < questions.length) {
+                    loadQuestion();
+                } else {
+                    showResults();
+                }
+            }, 150);
+        }
+
+        async function showResults() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            localStorage.setItem("exam_submitted_" + userName, "true");
+
+            document.getElementById("quiz-screen").style.display = "none";
+            document.getElementById("result-screen").style.display = "block";
+
+            let percentage = Math.round((correctAnswersCount / questions.length) * 100);
+
+            let grade = 2;
+            let gradeColor = "#ef4444";
+            if (percentage >= 86) {
+                grade = 5;
+                gradeColor = "#22c55e";
+            } else if (percentage >= 70) {
+                grade = 4;
+                gradeColor = "#38bdf8";
+            } else if (percentage >= 55) {
+                grade = 3;
+                gradeColor = "#eab308";
+            } else {
+                grade = 2;
+                gradeColor = "#ef4444";
+            }
+
+            document.getElementById("grade-display").innerHTML = `O'quvchi bahosi: <span class="grade-badge" style="background-color: ${gradeColor}; color: #0f172a;">${grade}-baho (${percentage}%)</span>`;
+
+            let labelTitle = currentTerm === 'annual' ? 'Yillik Monitoring' : `${currentTerm}-Chorak`;
+            document.getElementById("result-user-name").innerText = `Ishtirokchi: ${userName} (${labelTitle})`;
+            document.getElementById("final-score-text").innerText = `Umumiy to'plangan ball: ${score}`;
+
+            await loadLeaderboard();
+
+            let existingUserIndex = leaderboard.findIndex(item => item.name === userName);
+
+            let recordCategory = `${labelTitle} | Baho: ${grade} (${percentage}%)`;
+            if (existingUserIndex !== -1) {
+                if (score > leaderboard[existingUserIndex].score) {
+                    leaderboard[existingUserIndex].score = score;
+                    leaderboard[existingUserIndex].category = recordCategory;
+                }
+            } else {
+                leaderboard.push({ name: userName, score: score, category: recordCategory });
+            }
+
+            leaderboard.sort((a, b) => b.score - a.score);
+            // Barcha natijalarni saqlash uchun slice olib tashlandi
+            
+            await saveLeaderboard();
+
+            let reviewContainer = document.getElementById("review-list");
+            reviewContainer.innerHTML = "";
+            userAnswers.forEach((item, index) => {
+                let div = document.createElement("div");
+                div.className = `review-item ${item.isCorrect ? 'review-correct' : 'review-incorrect'}`;
+                div.innerHTML = `<strong>${index + 1}. ${item.question}</strong><br>
+                               Sizning javobingiz: ${item.selected} ${item.isCorrect ? '✅' : '❌'}<br>
+                               ${!item.isCorrect ? `To'g'ri javob: <b>${item.correctAnswer}</b>` : ''}`;
+                reviewContainer.appendChild(div);
+            });
+
+            updateLeaderboardUI();
+        }
+
+        function updateLeaderboardUI() {
+            let homeHtml = "";
+            let resultHtml = "";
+
+            if (leaderboard.length === 0) {
+                homeHtml = `<div style="text-align: center; color: #94a3b8; font-size: 13px;">Hali natijalar mavjud emas</div>`;
+                resultHtml = `<div style="text-align: center; color: #94a3b8; font-size: 13px;">Hali natijalar mavjud emas</div>`;
+            } else {
+                leaderboard.forEach((item, index) => {
+                    let medal = index === 0 ? "🥇" : (index === 1 ? "🥈" : (index === 2 ? "🥉" : "🔹"));
+                    let row = `<div class="leaderboard-item">
+                                   <span>${medal} ${index + 1}-o'rin: <b>${item.name}</b> <small style="color:#94a3b8">(${item.category})</small></span>
+                                   <span><b>${item.score} ball</b></span>
+                               </div>`;
+                    homeHtml += row;
+                    resultHtml += row;
+                });
+            }
+
+            document.getElementById("home-leaderboard-list").innerHTML = homeHtml;
+            document.getElementById("result-leaderboard-list").innerHTML = resultHtml;
+        }
+    </script>
+</body>
+</html>
